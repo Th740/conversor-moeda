@@ -1,45 +1,46 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 import { CreateConversionDto } from './dto/create-conversion.dto';
+import {
+  Conversion,
+  ConversionDocument,
+} from './entities/conversion.entity';
 
 @Injectable()
 export class ConversionsService {
+  constructor(
+    @InjectModel(Conversion.name)
+    private conversionModel: Model<ConversionDocument>,
+  ) {}
 
- private conversions: any[] = [];
-  private id = 1;
-
-  create(createConversionDto: CreateConversionDto) {
-
+  async create(createConversionDto: CreateConversionDto) {
     const { amount, fromCurrency } = createConversionDto;
 
     if (amount <= 0) {
-      throw new Error('O valor deve ser maior que zero');
+      throw new BadRequestException('O valor deve ser maior que zero');
     }
 
     const usdRate = 0.18;
     const eurRate = 0.16;
 
-    const newConversion = {
-      id: this.id++,
+    const newConversion = new this.conversionModel({
       amount,
       fromCurrency,
       usd: amount * usdRate,
       eur: amount * eurRate,
-    };
+    });
 
-    this.conversions.push(newConversion);
-
-    return newConversion;
+    return newConversion.save();
   }
 
-  findAll() {
-    return this.conversions;
+  async findAll() {
+    return this.conversionModel.find().exec();
   }
 
-  findOne(id: number) {
-
-    const conversion = this.conversions.find(
-      item => item.id === id,
-    );
+  async findOne(id: string) {
+    const conversion = await this.conversionModel.findById(id).exec();
 
     if (!conversion) {
       throw new NotFoundException('Conversão não encontrada');
@@ -48,34 +49,32 @@ export class ConversionsService {
     return conversion;
   }
 
-  update(id: number, body: any) {
-
-    const conversion = this.findOne(id);
+  async update(id: string, body: any) {
+    const usdRate = 0.18;
+    const eurRate = 0.16;
 
     if (body.amount) {
+      body.usd = body.amount * usdRate;
+      body.eur = body.amount * eurRate;
+    }
 
-      const usdRate = 0.18;
-      const eurRate = 0.16;
+    const conversion = await this.conversionModel
+      .findByIdAndUpdate(id, body, { new: true })
+      .exec();
 
-      conversion.amount = body.amount;
-      conversion.usd = body.amount * usdRate;
-      conversion.eur = body.amount * eurRate;
+    if (!conversion) {
+      throw new NotFoundException('Conversão não encontrada');
     }
 
     return conversion;
   }
 
-  remove(id: number) {
+  async remove(id: string) {
+    const conversion = await this.conversionModel.findByIdAndDelete(id).exec();
 
-    const index = this.conversions.findIndex(
-      item => item.id === id,
-    );
-
-    if (index === -1) {
+    if (!conversion) {
       throw new NotFoundException('Conversão não encontrada');
     }
-
-    this.conversions.splice(index, 1);
 
     return {
       message: 'Conversão removida',

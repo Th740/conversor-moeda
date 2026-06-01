@@ -19,16 +19,16 @@ export class ConversionsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.conversionsService.findOne(+id);
+    return this.conversionsService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateConversionDto: UpdateConversionDto) {
-    return this.conversionsService.update(+id, updateConversionDto);
+    return this.conversionsService.update(id, updateConversionDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.conversionsService.remove(+id);
+    return this.conversionsService.remove(id);
   }
 }
