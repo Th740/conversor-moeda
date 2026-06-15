@@ -1,165 +1,135 @@
-API de Conversão de Moedas
+# API de Conversão de Moedas
 
- Descrição
+## Descrição
 
-Este projeto consiste em uma API REST desenvolvida utilizando NestJS e TypeScript para realizar conversões de valores monetários para Dólar Americano (USD) e Euro (EUR).
+Este projeto consiste em uma API REST desenvolvida utilizando NestJS, TypeScript e MongoDB para realizar conversões de moedas em tempo real.
 
-A aplicação permite criar, consultar, atualizar e remover conversões através de endpoints documentados com Swagger.
+A aplicação consulta uma API externa de câmbio para obter as taxas atualizadas e realiza a conversão dos valores para:
 
----
+- BRL (Real Brasileiro)
+- USD (Dólar Americano)
+- EUR (Euro)
 
- Tecnologias Utilizadas
-
-* NestJS
-* TypeScript
-* Swagger/OpenAPI
-* MongoDB
-* Git e GitHub
+Além disso, todas as conversões realizadas são armazenadas no banco de dados MongoDB para consulta posterior.
 
 ---
 
- Funcionalidades
+## Tecnologias Utilizadas
 
-* Criar conversões de moedas
-* Consultar conversões por ID
-* Listar todas as conversões
-* Atualizar conversões existentes
-* Excluir conversões
-* Conversão automática para USD e EUR
-* Documentação automática com Swagger
-
----
-
- Instalação
-
-Clone o repositório:
-
-bash
-git clone https://github.com/Th740/conversor-moeda.git
-
-
-Entre na pasta do projeto:
-
-bash
-cd conversor-moeda
-
-
-Instale as dependências:
-
-bash
-npm install
-
+- NestJS
+- TypeScript
+- MongoDB Atlas
+- Mongoose
+- Swagger
+- Axios
+- Class Validator
+- Class Transformer
 
 ---
 
- Executando o Projeto
+## Funcionalidades
 
-Modo desenvolvimento:
+### Conversão de Moedas
 
-bash
-npm run start:dev
+Permite converter valores monetários utilizando taxas atualizadas em tempo real.
 
+### Armazenamento das Conversões
 
-Modo produção:
+Todas as conversões realizadas são salvas no banco de dados MongoDB.
 
-bash
-npm run build
-npm run start:prod
+### Documentação Swagger
 
-
----
-
- Banco de Dados
-
-O projeto utiliza MongoDB.
-
-String de conexão utilizada:
-
-txt
-mongodb://localhost:27017/conversoes-db
-
+A API possui documentação interativa disponível através do Swagger.
 
 ---
 
- Documentação Swagger
+## Rotas Disponíveis
 
-Após iniciar o projeto, acesse:
+### Listar todas as conversões
 
-txt
-http://localhost:3000/api
+GET
 
+```http
+/conversions
+```
 
- Rotas Disponíveis
+### Buscar conversão por ID
 
- Criar Conversão
+GET
 
-http
-POST /conversions
+```http
+/conversions/:id
+```
 
+### Criar conversão
+
+POST
+
+```http
+/conversions
+```
 
 Exemplo:
 
-json
+```json
 {
   "amount": 100,
-  "fromCurrency": "BRL"
+  "fromCurrency": "USD"
 }
+```
 
+### Atualizar conversão
 
----
+PUT
 
- Consultar Conversão
+```http
+/conversions/:id
+```
 
-http
-GET /conversions/{id}
+### Excluir conversão
 
+DELETE
 
----
-
- Listar Conversões
-
-http
-GET /conversions
-
-
----
-
- Atualizar Conversão
-
-http
-PATCH /conversions/{id}
-
-
-Exemplo:
-
-json
-{
-  "amount": 200
-}
-
+```http
+/conversions/:id
+```
 
 ---
 
-Remover Conversão
+## Executando o Projeto
 
-http
-DELETE /conversions/{id}
+Instalar dependências:
 
+```bash
+npm install
+```
+
+Executar em modo desenvolvimento:
+
+```bash
+npm run start:dev
+```
+
+A API ficará disponível em:
+
+```text
+http://localhost:3000
+```
+
+Swagger:
+
+```text
+http://localhost:3000/api
+```
 
 ---
- Regras de Negócio
 
-* O valor deve ser maior que zero.
-* A moeda de origem deve ser válida.
-* Toda conversão gera valores em USD e EUR.
-* As taxas de câmbio são simuladas.
+## Estrutura do Projeto
 
----
-
- Estrutura do Projeto
-
-txt
+```text
 src/
+├── common/
+│   └── filters/
 ├── conversions/
 │   ├── dto/
 │   ├── entities/
@@ -171,20 +141,26 @@ src/
 ├── app.controller.ts
 ├── app.service.ts
 └── main.ts
-
-
----
-
- Equipe
-
-* Matheus Marcelino
-* Lúcio
-* Arthur
+```
 
 ---
 
- Status do Projeto
+## Banco de Dados
 
-Projeto desenvolvido para a AV2 da disciplina de Desenvolvimento Backend com NestJS.
+O projeto utiliza MongoDB Atlas para armazenamento das conversões realizadas.
 
-CRUD implementado, documentação Swagger configurada e integração com MongoDB realizada.
+---
+
+## Equipe
+
+- Matheus Marcelino – 01815268
+- Arthur Paiva – 01792621
+- Lucio Daniel – 01825691
+
+---
+
+## Status do Projeto
+
+Projeto desenvolvido para a AV2 da disciplina de Desenvolvimento Backend.
+
+CRUD implementado, integração com MongoDB realizada, documentação Swagger configurada e consumo de API externa para obtenção das cotações em tempo real.
